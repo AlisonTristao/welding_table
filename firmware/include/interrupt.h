@@ -1,22 +1,18 @@
 #ifndef INTERRUPT_H
 #define INTERRUPT_H
-#include "controle.h"
-#include "Arduino.h"
+#include <controle.h>
+#include <define.h>
 
-// pins of the buttons
-#define btn1    2
-#define btn2    3
-
-// btn filter
-#define BTN_FILTER  500
+// variables
 extern uint32_t time_filter_1;
 extern uint32_t time_filter_2;
 extern uint32_t current_time_states;
-
 extern uint8_t idx_states;
 extern bool states_on;
+
+// skip to the next state
 void next_state(){
-    // filter
+    // filter time and state flow on
     if ((millis() - time_filter_1) < BTN_FILTER || !states_on) return;
     
     // next state
@@ -28,11 +24,12 @@ void next_state(){
     current_time_states = millis();
 }
 
+// turn off the state flow
 void states_off(){
     // filter
     if ((millis() - time_filter_2) < BTN_FILTER) return;
 
-    // turn off the states
+    // turn off/on the states
     idx_states = 0;
     states_on = !states_on;
 
