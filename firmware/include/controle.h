@@ -15,7 +15,7 @@ typedef struct{
     uint8_t     Kp;
     uint32_t    Ki;
     uint16_t    Ts;
-    double      i;
+    double      i = 0;
 } control;
 
 uint32_t controlePI(double y, double s, control &c){

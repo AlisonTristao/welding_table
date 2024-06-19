@@ -1,6 +1,14 @@
 #ifndef DEFINE_H
 #define DEFINE_H
+
+// library and includes
+#include <LiquidCrystal_I2C.h>
 #include <Arduino.h>
+#include <max6675.h>
+#include <controle.h>
+#include <interrupt.h>
+#include <Wire.h>
+#include <temp.h>
 
 // states
 #define DEFAULT_    0

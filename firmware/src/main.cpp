@@ -1,10 +1,5 @@
-#include <LiquidCrystal_I2C.h>
-#include <max6675.h>
-#include <Wire.h>
+// define all inclusions and variables
 #include <define.h>
-#include <temp.h>
-#include <controle.h>
-#include <interrupt.h>
 
 // temperature
 MAX6675 thermo(thermoCLK, thermoCS, thermoDO);
@@ -15,7 +10,7 @@ control pi_control;
 // states
 state states[4];
 
-//Inicializa o display no endereco 0x27
+// lcd display with address hex 0x27, 16 columns and 2 lines
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 // global variables

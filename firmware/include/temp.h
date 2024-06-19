@@ -1,6 +1,5 @@
 #ifndef TEMP_H
 #define TEMP_H
-#include <max6675.h>
 #include <define.h>
 
 // measure temperature

@@ -1,6 +1,5 @@
 #ifndef INTERRUPT_H
 #define INTERRUPT_H
-#include <controle.h>
 #include <define.h>
 
 // variables
@@ -24,7 +23,7 @@ void next_state(){
     current_time_states = millis();
 }
 
-// turn off the state flow
+// turn off/on the state flow
 void states_off(){
     // filter
     if ((millis() - time_filter_2) < BTN_FILTER) return;
