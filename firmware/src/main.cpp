@@ -67,20 +67,20 @@ void setup() {
     // pre heater
     states[1].state     = PRE_HEATER;
     states[1].name      = "HEATER";
-    states[1].time_ms   = 10e3;
-    states[1].set_point = 30;
+    states[1].time_ms   = 180e3;
+    states[1].set_point = 150;
 
     // reflow
     states[2].state     = REFLOW;
     states[2].name      = "REFLOW";
-    states[2].time_ms   = 20e3;
-    states[2].set_point = 40;
+    states[2].time_ms   = 90e3;
+    states[2].set_point = 200;
 
     // pos-reflow
     states[3].state     = POS_REFLOW;
     states[3].name      = "POSREF";
     states[3].time_ms   = 30e3;
-    states[3].set_point = 50;
+    states[3].set_point = 240;
 
     // gain and time of the control
     pi_control.Kp = KP;
