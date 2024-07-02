@@ -10,6 +10,18 @@ control pi_control;
 // states
 state states[4];
 
+// degree symbol
+byte grau[8] = {
+  B00111,
+  B00101,
+  B00111,
+  B00000,
+  B00000,
+  B00000,
+  B00000,
+  B00000
+};
+
 // lcd display with address hex 0x27, 16 columns and 2 lines
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
@@ -19,13 +31,15 @@ uint32_t    time_filter_1          = 0;    // filter time btn1
 uint32_t    time_filter_2          = 0;    // filter time btn2
 uint32_t    current_time_states    = 0;    // time of the states
 uint32_t    timer                  = 0;    // time of the loop
-uint32_t    u                      = 0;    // signal
+uint16_t    u                      = 0;    // signal
 double      temp                   = 0;    // temperature of table
 double      sp                     = 0;    // manual setpoint 
 bool        states_on              = true; // states flow on/off
 
 
 void setup() {
+    Serial.begin(9600);
+
     // interrupts
     init_btn();
 
@@ -36,11 +50,14 @@ void setup() {
     lcd.begin();
     lcd.setBacklight(HIGH);
 
+    // add º to the display
+    lcd.createChar(0, grau);
+
     // init fan and pwm
     pinMode(fan, OUTPUT);
     pinMode(pwmSSR, OUTPUT);
 
-    /* --- states --- */ 
+    /* ----- states ----- */ 
     // default
     states[0].state     = DEFAULT_;
     states[0].name      = "OFF";
@@ -49,7 +66,7 @@ void setup() {
 
     // pre heater
     states[1].state     = PRE_HEATER;
-    states[1].name      = "PRE_HEATER";
+    states[1].name      = "HEATER";
     states[1].time_ms   = 10e3;
     states[1].set_point = 30;
 
@@ -61,7 +78,7 @@ void setup() {
 
     // pos-reflow
     states[3].state     = POS_REFLOW;
-    states[3].name      = "POS_REFLOW";
+    states[3].name      = "POSREF";
     states[3].time_ms   = 30e3;
     states[3].set_point = 50;
 
@@ -82,11 +99,11 @@ void loop() {
     sp = get_temp(POT);
 
     // state flow
-    if(states[idx_states].state != DEFAULT_){
+    if(states[idx_states].state != DEFAULT_) {
         // skip to the next state
         if((millis() - current_time_states) > states[idx_states].time_ms) 
             next_state();
-    }else{
+    } else {
         // turn on/off fan 
         if(states_on && temp > 50)  digitalWrite(fan, HIGH);
         else                        digitalWrite(fan, LOW);
@@ -100,8 +117,43 @@ void loop() {
     analogWrite(pwmSSR, u);
 
     // delay
-    while((millis() - timer) < 500){
-        // atualiza display
-        
+    while((millis() - timer) < 500) {
+        // clear display
+        delay(200); // wait time to clear the display
+        lcd.clear();
+
+        // time of the state
+        float timer_t = (millis() - current_time_states)/1000;
+
+        // print temperature
+        lcd.setCursor(0, 0);
+        lcd.print("T: ");
+        lcd.print(temp);
+
+        // degree symbol
+        lcd.write(byte(0));
+        lcd.print("C");
+
+        // if states flow is on
+        if(states_on) {
+            // print state name
+            lcd.setCursor(0, 1);
+            lcd.print("F: ");
+            lcd.print(states[idx_states].name);
+            // print time of the state
+            if(states[idx_states].state != DEFAULT_) {
+                lcd.print(" ");
+                lcd.print(timer_t, 0);
+                lcd.print("s");
+            }
+        } else {
+            // printa o setpoint com uma casa decimal
+            lcd.setCursor(0, 1);
+            lcd.print("R: ");
+            lcd.print(sp, 0);
+            // degree symbol
+            lcd.write(byte(0));
+            lcd.print("C");
+        }
     }
 }
