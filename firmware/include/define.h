@@ -8,7 +8,7 @@
 #define POS_REFLOW  3
 
 // control constants
-#define KP          25
+#define KP          2
 #define KI          1
 
 // pwm solid state relay

@@ -18,7 +18,9 @@ typedef struct{
     double      i = 0;
 } control;
 
-uint32_t controlePI(double y, double s, control &c){
+extern state states[4];
+
+int32_t controlePI(double y, double s, control &c){
     // error
     double error = s - y;
     
@@ -30,11 +32,17 @@ uint32_t controlePI(double y, double s, control &c){
     if(c.i < 0)   c.i = 0;
     
     // control signal
-    uint32_t u = c.Kp * error + c.Ki * c.i;
+    int32_t u = c.Kp * error + c.Ki * c.i/100;
     
     // saturate
     if(u > 255) u = 255;
     if(u < 0)   u = 0;
+
+    // turn on the fan
+    if(error < -5 && states->state == DEFAULT_ && y > 50)  
+        digitalWrite(fan, LOW);
+    else                                         
+        digitalWrite(fan, HIGH);
 
     return u;
 }

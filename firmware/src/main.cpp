@@ -38,8 +38,6 @@ bool        states_on              = true; // states flow on/off
 
 
 void setup() {
-    Serial.begin(9600);
-
     // interrupts
     init_btn();
 
@@ -79,8 +77,8 @@ void setup() {
     // pos-reflow
     states[3].state     = POS_REFLOW;
     states[3].name      = "POSREF";
-    states[3].time_ms   = 30e3;
-    states[3].set_point = 240;
+    states[3].time_ms   = 45e3;
+    states[3].set_point = 250;
 
     // gain and time of the control
     pi_control.Kp = KP;
@@ -103,57 +101,53 @@ void loop() {
         // skip to the next state
         if((millis() - current_time_states) > states[idx_states].time_ms) 
             next_state();
-    } else {
-        // turn on/off fan 
-        if(states_on && temp > 50)  digitalWrite(fan, HIGH);
-        else                        digitalWrite(fan, LOW);
-    }
+    } 
 
     // control signal
-    if(!states_on)  u = controlePI(temp, sp, pi_control);
-    else            u = controlePI(temp, states[idx_states].set_point, pi_control);
+    if(!states_on)   u = controlePI(temp, sp, pi_control);
+    else             u = controlePI(temp, states[idx_states].set_point, pi_control);
 
     // apply control
     analogWrite(pwmSSR, u);
 
-    // delay
-    while((millis() - timer) < 500) {
-        // clear display
-        delay(200); // wait time to clear the display
-        lcd.clear();
+    // clear display
+    delay(200); // wait time to clear the display
+    lcd.clear();
 
-        // time of the state
-        float timer_t = (millis() - current_time_states)/1000;
+    // time of the state
+    float timer_t = (millis() - current_time_states)/1000;
 
-        // print temperature
-        lcd.setCursor(0, 0);
-        lcd.print("T: ");
-        lcd.print(temp);
+    // print temperature
+    lcd.setCursor(0, 0);
+    lcd.print("T: ");
+    lcd.print(temp, 0);
 
+    // degree symbol
+    lcd.write(byte(0));
+    lcd.print("C");
+
+    // if states flow is on
+    if(states_on) {
+        // print state name
+        lcd.setCursor(0, 1);
+        lcd.print("F: ");
+        lcd.print(states[idx_states].name);
+        // print time of the state
+        if(states[idx_states].state != DEFAULT_) {
+            lcd.print(" ");
+            lcd.print(timer_t, 0);
+            lcd.print("s");
+        }
+    } else {
+        // printa o setpoint com uma casa decimal
+        lcd.setCursor(0, 1);
+        lcd.print("R: ");
+        lcd.print(sp, 0);
         // degree symbol
         lcd.write(byte(0));
         lcd.print("C");
-
-        // if states flow is on
-        if(states_on) {
-            // print state name
-            lcd.setCursor(0, 1);
-            lcd.print("F: ");
-            lcd.print(states[idx_states].name);
-            // print time of the state
-            if(states[idx_states].state != DEFAULT_) {
-                lcd.print(" ");
-                lcd.print(timer_t, 0);
-                lcd.print("s");
-            }
-        } else {
-            // printa o setpoint com uma casa decimal
-            lcd.setCursor(0, 1);
-            lcd.print("R: ");
-            lcd.print(sp, 0);
-            // degree symbol
-            lcd.write(byte(0));
-            lcd.print("C");
-        }
     }
+
+    // delay
+    while((millis() - timer) < 500) { }
 }
