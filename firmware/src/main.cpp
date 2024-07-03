@@ -96,12 +96,10 @@ void loop() {
     // manual setpoint
     sp = get_temp(POT);
 
-    // state flow
-    if(states[idx_states].state != DEFAULT_) {
-        // skip to the next state
+    // skip to the next state
+    if(states[idx_states].state != DEFAULT_) 
         if((millis() - current_time_states) > states[idx_states].time_ms) 
             next_state();
-    } 
 
     // control signal
     if(!states_on)   u = controlePI(temp, sp, pi_control);
@@ -111,7 +109,6 @@ void loop() {
     analogWrite(pwmSSR, u);
 
     // clear display
-    delay(200); // wait time to clear the display
     lcd.clear();
 
     // time of the state
@@ -139,7 +136,7 @@ void loop() {
             lcd.print("s");
         }
     } else {
-        // printa o setpoint com uma casa decimal
+        // print manual setpoint
         lcd.setCursor(0, 1);
         lcd.print("R: ");
         lcd.print(sp, 0);
