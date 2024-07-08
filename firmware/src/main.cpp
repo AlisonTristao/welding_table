@@ -71,14 +71,14 @@ void setup() {
     // reflow
     states[2].state     = REFLOW;
     states[2].name      = "REFLOW";
-    states[2].time_ms   = 90e3;
+    states[2].time_ms   = 60e3;
     states[2].set_point = 200;
 
     // pos-reflow
     states[3].state     = POS_REFLOW;
     states[3].name      = "POSREF";
     states[3].time_ms   = 45e3;
-    states[3].set_point = 250;
+    states[3].set_point = 500;
 
     // gain and time of the control
     pi_control.Kp = KP;
@@ -87,6 +87,10 @@ void setup() {
 }
 
 void loop() {
+    // buttons pressed 
+    if(digitalRead(btn1) == LOW) next_state();
+    if(digitalRead(btn2) == LOW) states_off();
+
     // start time
     timer = millis(); 
 
@@ -146,5 +150,6 @@ void loop() {
     }
 
     // delay
-    while((millis() - timer) < 500) { }
+    while((millis() - timer) < 500) {
+    }
 }

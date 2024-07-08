@@ -6,7 +6,7 @@
 typedef struct{
     uint8_t     state;
     uint32_t    time_ms;
-    uint8_t     set_point;
+    uint16_t     set_point;
     String      name;    
 } state;
 

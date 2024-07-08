@@ -40,8 +40,9 @@ void states_off(){
 void init_btn(){
     pinMode(btn1, INPUT_PULLUP);
     pinMode(btn2, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(btn1), next_state, LOW);
-    attachInterrupt(digitalPinToInterrupt(btn2), states_off, LOW);
+    // bug with the cooler current peak
+    // attachInterrupt(digitalPinToInterrupt(btn1), next_state, LOW);
+    // attachInterrupt(digitalPinToInterrupt(btn2), states_off, LOW);
 }
 
 #endif  
